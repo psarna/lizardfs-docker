@@ -1,0 +1,59 @@
+version: '2'
+services:
+  lizardfs-master:
+    build: ./lizardfs-master
+    container_name: "lizardfs-master"
+    networks:
+      lizardfs-net:
+        ipv4_address: "172.20.0.2"
+  lizardfs-shadow:
+    build: ./lizardfs-shadow
+    container_name: "lizardfs-shadow"
+    links:
+      - lizardfs-master
+    networks:
+      lizardfs-net:
+        ipv4_address: "172.20.0.3"
+  lizardfs-client:
+    build: ./lizardfs-client
+    container_name: "lizardfs-client"
+    privileged: true
+    stdin_open: true
+    tty: true
+    links:
+      - lizardfs-master
+    networks:
+      lizardfs-net:
+        ipv4_address: "172.20.0.5"
+  lizardfs-chunkserver-01:
+    build: ./lizardfs-chunkserver
+    container_name: "lizardfs-chunkserver-01"
+    links:
+      - lizardfs-master
+    networks:
+      lizardfs-net:
+        ipv4_address: "172.20.0.11"
+  lizardfs-chunkserver-02:
+    build: ./lizardfs-chunkserver
+    container_name: "lizardfs-chunkserver-02"
+    links:
+      - lizardfs-master
+    networks:
+      lizardfs-net:
+        ipv4_address: "172.20.0.12"
+  lizardfs-chunkserver-03:
+    build: ./lizardfs-chunkserver
+    container_name: "lizardfs-chunkserver-03"
+    links:
+      - lizardfs-master
+    networks:
+      lizardfs-net:
+        ipv4_address: "172.20.0.13"
+networks:
+  lizardfs-net:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.20.0.0/16
+         gateway: 172.20.0.1
+
